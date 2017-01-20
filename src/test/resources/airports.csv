@@ -1,0 +1,5 @@
+"id","ident","type","name","latitude_deg","longitude_deg","elevation_ft","continent","iso_country","iso_region","municipality","scheduled_service","gps_code","iata_code","local_code","home_link","wikipedia_link","keywords"
+11001,"42MD","small_airport","Herrington Field",39.46829987,-79.4253006,2470,"NA","US","US-MD","Oakland","no","42MD",,"42MD",,,
+19415,"KBUU","small_airport","Burlington Municipal Airport",42.69070053100586,-88.30460357666016,779,"NA","US","US-WI","Burlington","no","KBUU",,"BUU",,"http://en.wikipedia.org/wiki/Burlington_Municipal_Airport_(Wisconsin)",
+29737,"ZMBS","small_airport","Bulgan Sum Airport",46.1006011963,91.584197998,3921,"AS","MN","MN-043",,"no","ZMBS","HBU",,,,
+12345,"AAA","incorrect_entry"
