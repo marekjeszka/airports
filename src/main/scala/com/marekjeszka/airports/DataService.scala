@@ -21,4 +21,8 @@ trait DataService {
     * @return runways as map: field -> value
     */
   def queryRunways(iso_country: String): List[Map[String, String]]
+
+  def queryTopCountries(limit: Int = 10, descending: Boolean = true): List[(Map[String, String],Int)]
+
+  def queryTopRunways(limit: Int = 10,descending: Boolean = true): List[Map[String, String]]
 }

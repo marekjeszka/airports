@@ -1,6 +1,7 @@
 package com.marekjeszka.airports
 
 import com.marekjeszka.airports.csv.CsvService
+import com.typesafe.config.ConfigFactory
 import org.scalatest.{FlatSpec, Matchers}
 
 class CsvServiceSpec extends FlatSpec with Matchers {
@@ -29,9 +30,43 @@ class CsvServiceSpec extends FlatSpec with Matchers {
     airports(1) should be(pl2)
   }
 
+  it should "query top countries grouped by number of airports" in {
+    val csvService = new CsvService(TopCountriesMockImporter)
+    val topCountries = csvService.queryTopCountries(2)
+    topCountries.size should be (2)
+    topCountries(0) should be ((Map("name" -> "Poland", "code" -> "PL"), 2))
+    topCountries(1) should be ((Map("name" -> "Canada", "code" -> "CA"), 2))
+
+    val lowCountries = csvService.queryTopCountries(2, false)
+    lowCountries.size should be (2)
+    lowCountries(0) should be ((Map("name" -> "Liberia", "code" -> "LR"), 1))
+    lowCountries(1) should be ((Map("name" -> "Lithuania", "code" -> "LT"), 1))
+  }
+
   private class MockImporter(data: List[Map[String, String]]) extends DataImporter {
     override def loadData(path: String): (List[String], List[Map[String, String]]) =
       (Nil, data)
   }
 
+  private object TopCountriesMockImporter extends DataImporter {
+    private val conf = ConfigFactory.load()
+
+    override def loadData(path: String): (List[String], List[Map[String, String]]) = {
+      if (path == conf.getString("paths.countries")) {
+        (Nil, List(
+          Map("name" -> "Liberia", "code" -> "LR"),
+          Map("name" -> "Lithuania", "code" -> "LT"),
+          Map("name" -> "Poland", "code" -> "PL"),
+          Map("name" -> "Canada", "code" -> "CA")))
+      } else { // airports
+        (Nil, List(
+          Map("id" -> "11002", "iso_country" -> "PL"),
+          Map("id" -> "11003", "iso_country" -> "PL"),
+          Map("id" -> "11004", "iso_country" -> "CA"),
+          Map("id" -> "11005", "iso_country" -> "CA"),
+          Map("id" -> "11006", "iso_country" -> "LT"),
+          Map("id" -> "11007", "iso_country" -> "LR")))
+      }
+    }
+  }
 }
