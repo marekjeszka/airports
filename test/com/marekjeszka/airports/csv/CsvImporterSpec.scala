@@ -4,7 +4,7 @@ import org.scalatest.{FlatSpec, Matchers}
 
 class CsvImporterSpec extends FlatSpec with Matchers {
   "CsvImporter" should "import airports" in {
-    val airports = CsvImporter.loadData("src/test/resources/airports.csv")
+    val airports = CsvImporter.loadData("test/resources/airports.csv")
 
     airports._2.length should be (3)
     Seq("ident" -> "42MD", "type" -> "small_airport").foreach {
