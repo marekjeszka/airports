@@ -25,4 +25,6 @@ trait DataService {
   def queryTopCountries(limit: Int = 10, descending: Boolean = true): List[(Map[String, String],Int)]
 
   def queryRunwaysPerCountry(): List[(String,List[String])]
+
+  def queryTopRunwayIdentifications(limit: Int = 10): List[String]
 }

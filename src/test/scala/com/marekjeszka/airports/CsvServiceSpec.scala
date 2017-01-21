@@ -51,6 +51,14 @@ class CsvServiceSpec extends FlatSpec with Matchers {
     runwaysPerCountry(1) should be (("Canada", List("ASPH")))
   }
 
+  it should "query top runway identification" in {
+    val csvService = new CsvService(RunwaysIdentMockImporter)
+    val topIdent = csvService.queryTopRunwayIdentifications(limit = 2)
+    topIdent.size should be (2)
+    topIdent(0) should be ("H1")
+    topIdent(1) should be ("12")
+  }
+
   private class MockImporter(data: List[Map[String, String]]) extends DataImporter {
     override def loadData(path: String): (List[String], List[Map[String, String]]) =
       (Nil, data)
@@ -99,6 +107,20 @@ class CsvServiceSpec extends FlatSpec with Matchers {
           Map("airport_ref" -> "11003", "surface" -> "CONC"),
           Map("airport_ref" -> "11005", "surface" -> "ASPH")))
       }
+    }
+  }
+
+  private object RunwaysIdentMockImporter extends DataImporter {
+    private val conf = ConfigFactory.load()
+
+    override def loadData(path: String): (List[String], List[Map[String, String]]) = {
+      (Nil, List(
+        Map("le_ident" -> "H1"),
+        Map("le_ident" -> "H1"),
+        Map("le_ident" -> "H1"),
+        Map("le_ident" -> "12"),
+        Map("le_ident" -> "12"),
+        Map("le_ident" -> "08")))
     }
   }
 }

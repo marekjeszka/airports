@@ -30,32 +30,42 @@ class CsvService(importer: DataImporter = CsvImporter) extends DataService {
   }
 
   override def queryTopCountries(limit: Int, descending: Boolean): List[(Map[String, String],Int)] = {
-    val airportsCount: Map[String, Int] =
-      airports._2
-        .groupBy(m => m(Iso_country))
-        .map(g => (g._1, g._2.size))
+    val airportsCount = sizeOfGroup(airports._2, Iso_country)
     val ordered = ListMap(airportsCount.toSeq.sortWith(ordering(descending)):_*).take(limit)
     countries._2
       .filter(c => ordered.contains(c(Code)))
       .map(c => (c, ordered(c(Code))))
   }
 
-  private def ordering(descending: Boolean): ((String,Int), (String,Int)) => Boolean = {
-    if (descending)
-      (a,b) => a._2 > b._2
-    else
-      (a,b) => a._2 < b._2
-  }
-
   override def queryRunwaysPerCountry(): List[(String,List[String])] = {
-    countries._2.map(c => (c(Name),c(Code)))
+    countries._2.map(c => (c(Name), c(Code)))
       .map(c => (c._1,
         airports._2.filter(a => a(Iso_country) == c._2).map(a => a(Id))))
       .map(c => (c._1,
-        c._2.flatMap(
-          airportId => runways._2.filter(r => r(Airport_ref) == airportId)
-        )
-        .map(r => r(Surface))))
+        c._2
+          .flatMap(
+            airportId => runways._2.filter(r => r(Airport_ref) == airportId)
+          )
+          .map(r => r(Surface))))
+  }
+
+  override def queryTopRunwayIdentifications(limit: Int): List[String] = {
+    val identsCount = sizeOfGroup(runways._2, Le_ident)
+    val ordered = ListMap(identsCount.toSeq.sortWith(ordering(true)):_*).take(limit)
+    ordered.keys.toList
+  }
+
+  private def sizeOfGroup(col: List[Map[String,String]], field: String): Map[String, Int] = {
+    col
+      .groupBy(r => r(field))
+      .map(g => (g._1, g._2.size))
+  }
+
+  private def ordering(descending: Boolean): ((String,Int), (String,Int)) => Boolean = {
+    if (descending)
+      (a, b) => a._2 > b._2
+    else
+      (a, b) => a._2 < b._2
   }
 }
 
@@ -67,4 +77,5 @@ object CsvService {
   private val Id = "id"
   private val Airport_ref = "airport_ref"
   private val Surface = "surface"
+  private val Le_ident = "le_ident"
 }
