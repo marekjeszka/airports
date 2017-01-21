@@ -40,15 +40,22 @@ class CsvService(importer: DataImporter = CsvImporter) extends DataService {
       .map(c => (c, ordered(c(Code))))
   }
 
-  override def queryTopRunways(limit: Int, descending: Boolean): List[Map[String, String]] = {
-    ???
-  }
-
   private def ordering(descending: Boolean): ((String,Int), (String,Int)) => Boolean = {
     if (descending)
       (a,b) => a._2 > b._2
     else
       (a,b) => a._2 < b._2
+  }
+
+  override def queryRunwaysPerCountry(): List[(String,List[String])] = {
+    countries._2.map(c => (c(Name),c(Code)))
+      .map(c => (c._1,
+        airports._2.filter(a => a(Iso_country) == c._2).map(a => a(Id))))
+      .map(c => (c._1,
+        c._2.flatMap(
+          airportId => runways._2.filter(r => r(Airport_ref) == airportId)
+        )
+        .map(r => r(Surface))))
   }
 }
 
@@ -57,4 +64,7 @@ object CsvService {
   private val Name = "name"
   private val Iso_country = "iso_country"
   private val Code = "code"
+  private val Id = "id"
+  private val Airport_ref = "airport_ref"
+  private val Surface = "surface"
 }

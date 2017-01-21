@@ -43,6 +43,14 @@ class CsvServiceSpec extends FlatSpec with Matchers {
     lowCountries(1) should be ((Map("name" -> "Lithuania", "code" -> "LT"), 1))
   }
 
+  it should "query surfaces per country" in {
+    val csvService = new CsvService(RunwaysPerCountryMockImporter)
+    val runwaysPerCountry = csvService.queryRunwaysPerCountry()
+    runwaysPerCountry.size should be (2)
+    runwaysPerCountry(0) should be (("Poland", List("TURF-F", "TURF", "CONC")))
+    runwaysPerCountry(1) should be (("Canada", List("ASPH")))
+  }
+
   private class MockImporter(data: List[Map[String, String]]) extends DataImporter {
     override def loadData(path: String): (List[String], List[Map[String, String]]) =
       (Nil, data)
@@ -66,6 +74,30 @@ class CsvServiceSpec extends FlatSpec with Matchers {
           Map("id" -> "11005", "iso_country" -> "CA"),
           Map("id" -> "11006", "iso_country" -> "LT"),
           Map("id" -> "11007", "iso_country" -> "LR")))
+      }
+    }
+  }
+
+  private object RunwaysPerCountryMockImporter extends DataImporter {
+    private val conf = ConfigFactory.load()
+
+    override def loadData(path: String): (List[String], List[Map[String, String]]) = {
+      if (path == conf.getString("paths.countries")) {
+        (Nil, List(
+          Map("name" -> "Poland", "code" -> "PL"),
+          Map("name" -> "Canada", "code" -> "CA")))
+      } else if (path == conf.getString("paths.airports")) {
+        (Nil, List(
+          Map("id" -> "11002", "iso_country" -> "PL"),
+          Map("id" -> "11003", "iso_country" -> "PL"),
+          Map("id" -> "11004", "iso_country" -> "CA"),
+          Map("id" -> "11005", "iso_country" -> "CA")))
+      } else { // runways
+        (Nil, List(
+          Map("airport_ref" -> "11002", "surface" -> "TURF-F"),
+          Map("airport_ref" -> "11002", "surface" -> "TURF"),
+          Map("airport_ref" -> "11003", "surface" -> "CONC"),
+          Map("airport_ref" -> "11005", "surface" -> "ASPH")))
       }
     }
   }
