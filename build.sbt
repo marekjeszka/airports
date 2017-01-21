@@ -12,7 +12,7 @@ libraryDependencies ++= {
     "com.typesafe" % "config" % "1.3.1",
     "com.github.tototoshi" %% "scala-csv" % "1.3.4",
 
-    "org.scalatest" %% "scalatest" % "3.0.1" % "test",
-	"org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test
+    "org.scalatest" %% "scalatest" % "3.0.1" % Test,
+	  "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test
   )
 }
