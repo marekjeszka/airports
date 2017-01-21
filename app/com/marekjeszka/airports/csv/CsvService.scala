@@ -14,15 +14,15 @@ class CsvService(importer: DataImporter = CsvImporter) extends DataService {
   private val runways = importer.loadData(conf.getString("paths.runways"))
 
   override def queryCountries(countryName: String): List[(String,String)] = {
-    countries._2.filter(m => m(Name).startsWith(countryName)).map(c => (c(Code),c(Name)))
+    countries.filter(m => m(Name).startsWith(countryName)).map(c => (c(Code),c(Name)))
   }
 
   override def queryAirports(iso_country: String): List[Map[String, String]] = {
-    isoCountryQuery(iso_country)(airports._2)
+    isoCountryQuery(iso_country)(airports)
   }
 
   override def queryRunways(iso_country: String): List[Map[String, String]] = {
-    isoCountryQuery(iso_country)(runways._2)
+    isoCountryQuery(iso_country)(runways)
   }
 
   private def isoCountryQuery(iso_country: String)(from: List[Map[String,String]]) = {
@@ -30,27 +30,27 @@ class CsvService(importer: DataImporter = CsvImporter) extends DataService {
   }
 
   override def queryTopCountries(limit: Int, descending: Boolean): List[(Map[String, String],Int)] = {
-    val airportsCount = sizeOfGroup(airports._2, Iso_country)
+    val airportsCount = sizeOfGroup(airports, Iso_country)
     val ordered = ListMap(airportsCount.toSeq.sortWith(ordering(descending)):_*).take(limit)
-    countries._2
+    countries
       .filter(c => ordered.contains(c(Code)))
       .map(c => (c, ordered(c(Code))))
   }
 
   override def queryRunwaysPerCountry(): List[(String,List[String])] = {
-    countries._2.map(c => (c(Name), c(Code)))
+    countries.map(c => (c(Name), c(Code)))
       .map(c => (c._1,
-        airports._2.filter(a => a(Iso_country) == c._2).map(a => a(Id))))
+        airports.filter(a => a(Iso_country) == c._2).map(a => a(Id))))
       .map(c => (c._1,
         c._2
           .flatMap(
-            airportId => runways._2.filter(r => r(Airport_ref) == airportId)
+            airportId => runways.filter(r => r(Airport_ref) == airportId)
           )
           .map(r => r(Surface))))
   }
 
   override def queryTopRunwayIdentifications(limit: Int): List[String] = {
-    val identsCount = sizeOfGroup(runways._2, Le_ident)
+    val identsCount = sizeOfGroup(runways, Le_ident)
     val ordered = ListMap(identsCount.toSeq.sortWith(ordering(true)):_*).take(limit)
     ordered.keys.toList
   }

@@ -60,28 +60,27 @@ class CsvServiceSpec extends FlatSpec with Matchers {
   }
 
   private class MockImporter(data: List[Map[String, String]]) extends DataImporter {
-    override def loadData(path: String): (List[String], List[Map[String, String]]) =
-      (Nil, data)
+    override def loadData(path: String): List[Map[String, String]] = data
   }
 
   private object TopCountriesMockImporter extends DataImporter {
     private val conf = ConfigFactory.load()
 
-    override def loadData(path: String): (List[String], List[Map[String, String]]) = {
+    override def loadData(path: String): List[Map[String, String]] = {
       if (path == conf.getString("paths.countries")) {
-        (Nil, List(
+        List(
           Map("name" -> "Liberia", "code" -> "LR"),
           Map("name" -> "Lithuania", "code" -> "LT"),
           Map("name" -> "Poland", "code" -> "PL"),
-          Map("name" -> "Canada", "code" -> "CA")))
+          Map("name" -> "Canada", "code" -> "CA"))
       } else { // airports
-        (Nil, List(
+        List(
           Map("id" -> "11002", "iso_country" -> "PL"),
           Map("id" -> "11003", "iso_country" -> "PL"),
           Map("id" -> "11004", "iso_country" -> "CA"),
           Map("id" -> "11005", "iso_country" -> "CA"),
           Map("id" -> "11006", "iso_country" -> "LT"),
-          Map("id" -> "11007", "iso_country" -> "LR")))
+          Map("id" -> "11007", "iso_country" -> "LR"))
       }
     }
   }
@@ -89,38 +88,37 @@ class CsvServiceSpec extends FlatSpec with Matchers {
   private object RunwaysPerCountryMockImporter extends DataImporter {
     private val conf = ConfigFactory.load()
 
-    override def loadData(path: String): (List[String], List[Map[String, String]]) = {
+    override def loadData(path: String): List[Map[String, String]] = {
       if (path == conf.getString("paths.countries")) {
-        (Nil, List(
+        List(
           Map("name" -> "Poland", "code" -> "PL"),
-          Map("name" -> "Canada", "code" -> "CA")))
+          Map("name" -> "Canada", "code" -> "CA"))
       } else if (path == conf.getString("paths.airports")) {
-        (Nil, List(
+        List(
           Map("id" -> "11002", "iso_country" -> "PL"),
           Map("id" -> "11003", "iso_country" -> "PL"),
           Map("id" -> "11004", "iso_country" -> "CA"),
-          Map("id" -> "11005", "iso_country" -> "CA")))
+          Map("id" -> "11005", "iso_country" -> "CA"))
       } else { // runways
-        (Nil, List(
+        List(
           Map("airport_ref" -> "11002", "surface" -> "TURF-F"),
           Map("airport_ref" -> "11002", "surface" -> "TURF"),
           Map("airport_ref" -> "11003", "surface" -> "CONC"),
-          Map("airport_ref" -> "11005", "surface" -> "ASPH")))
+          Map("airport_ref" -> "11005", "surface" -> "ASPH"))
       }
     }
   }
 
   private object RunwaysIdentMockImporter extends DataImporter {
-    private val conf = ConfigFactory.load()
 
-    override def loadData(path: String): (List[String], List[Map[String, String]]) = {
-      (Nil, List(
+    override def loadData(path: String): List[Map[String, String]] = {
+      List(
         Map("le_ident" -> "H1"),
         Map("le_ident" -> "H1"),
         Map("le_ident" -> "H1"),
         Map("le_ident" -> "12"),
         Map("le_ident" -> "12"),
-        Map("le_ident" -> "08")))
+        Map("le_ident" -> "08"))
     }
   }
 }

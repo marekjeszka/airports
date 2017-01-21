@@ -6,9 +6,9 @@ import com.github.tototoshi.csv.CSVReader
 import com.marekjeszka.airports.DataImporter
 
 object CsvImporter extends DataImporter {
-  override def loadData(path: String): (List[String], List[Map[String, String]]) = {
+  override def loadData(path: String): List[Map[String, String]] = {
     val reader = CSVReader.open(new File(path))
     val (fields, data) = reader.allWithOrderedHeaders()
-    (fields, data.filter(p => fields.forall(p.contains)))
+    data.filter(p => fields.forall(p.contains))
   }
 }
