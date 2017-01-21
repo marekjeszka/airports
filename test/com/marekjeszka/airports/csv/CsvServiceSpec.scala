@@ -1,6 +1,6 @@
-package com.marekjeszka.airports
+package com.marekjeszka.airports.csv
 
-import com.marekjeszka.airports.csv.CsvService
+import com.marekjeszka.airports.DataImporter
 import com.typesafe.config.ConfigFactory
 import org.scalatest.{FlatSpec, Matchers}
 
