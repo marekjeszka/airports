@@ -61,7 +61,7 @@ class CsvServiceSpec extends FlatSpec with Matchers {
     val csvService = new CsvService(RunwaysPerCountryMockImporter)
     val runwaysPerCountry = csvService.queryRunwaysPerCountry()
     runwaysPerCountry.size should be (2)
-    runwaysPerCountry(0) should be (("Poland", List("TURF-F", "TURF", "CONC")))
+    runwaysPerCountry(0) should be (("Poland", List("TURF-F", "TURF")))
     runwaysPerCountry(1) should be (("Canada", List("ASPH")))
   }
 
@@ -117,7 +117,7 @@ class CsvServiceSpec extends FlatSpec with Matchers {
         List(
           Map("airport_ref" -> "11002", "surface" -> "TURF-F"),
           Map("airport_ref" -> "11002", "surface" -> "TURF"),
-          Map("airport_ref" -> "11003", "surface" -> "CONC"),
+          Map("airport_ref" -> "11003", "surface" -> "TURF"),
           Map("airport_ref" -> "11005", "surface" -> "ASPH"))
       }
     }

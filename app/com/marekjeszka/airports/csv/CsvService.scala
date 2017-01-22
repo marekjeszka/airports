@@ -67,7 +67,7 @@ class CsvService(importer: DataImporter = CsvImporter) extends DataService {
           .flatMap(
             airportId => allRunways.filter(r => r(Airport_ref) == airportId)
           )
-          .map(r => r(Surface))))
+          .map(r => r(Surface)).distinct))
   }
 
   override def queryTopRunwayIdentifications(limit: Int): List[String] = {

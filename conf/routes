@@ -1,9 +1,9 @@
-# Routes
-# This file defines all application routes (Higher priority routes first)
-# https://www.playframework.com/documentation/latest/ScalaRouting
-# ~~~~
-
-# An example controller showing a sample home page
 GET     /                           com.marekjeszka.airports.controllers.HomeController.index
 
 GET     /countries/:name            com.marekjeszka.airports.controllers.HomeController.countries(name: String)
+
+GET     /reports/topCountries       com.marekjeszka.airports.controllers.HomeController.topCountries
+
+GET     /reports/runwaysPerCountry  com.marekjeszka.airports.controllers.HomeController.runwaysPerCountry
+
+GET     /reports/topIdentifications com.marekjeszka.airports.controllers.HomeController.topIdentifications
