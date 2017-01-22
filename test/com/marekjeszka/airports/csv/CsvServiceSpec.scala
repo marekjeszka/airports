@@ -1,6 +1,7 @@
 package com.marekjeszka.airports.csv
 
 import com.marekjeszka.airports.DataImporter
+import com.marekjeszka.airports.model.CountryAirportRunway
 import com.typesafe.config.ConfigFactory
 import org.scalatest.{FlatSpec, Matchers}
 
@@ -38,6 +39,9 @@ class CsvServiceSpec extends FlatSpec with Matchers {
     val csvService = new CsvService(RunwaysPerCountryMockImporter)
     val withRunways = csvService.queryAirportsWithRunways("Can")
     withRunways.size should be (1)
+    withRunways.head should be (
+      CountryAirportRunway("Canada",
+        List(("Flughafen",List()),("Aeroporto",List(Map("airport_ref" -> "11005", "surface" -> "ASPH"))))))
   }
 
   it should "query top countries grouped by number of airports" in {
