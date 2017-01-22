@@ -5,16 +5,20 @@ import com.typesafe.config.ConfigFactory
 import org.scalatest.{FlatSpec, Matchers}
 
 class CsvServiceSpec extends FlatSpec with Matchers {
-  "CsvService" should "query countries partially/fuzzy" in {
+  "CsvService" should "query countries partially/fuzzy by name and code" in {
     val csvService = new CsvService(new MockImporter(
       List(
         Map("name" -> "Liberia", "code" -> "LR"),
         Map("name" -> "Lithuania", "code" -> "LT"),
         Map("name" -> "Poland", "code" -> "PL"))))
-    val countries = csvService.queryCountries("Li")
-    countries.size should be (2)
-    countries(0) should be(("LR", "Liberia"))
-    countries(1) should be(("LT", "Lithuania"))
+    val countriesByName = csvService.queryCountries("Li")
+    countriesByName.size should be (2)
+    countriesByName(0) should be(("LR", "Liberia"))
+    countriesByName(1) should be(("LT", "Lithuania"))
+
+    val countriesByCode = csvService.queryCountries("PL")
+    countriesByCode.size should be (1)
+    countriesByCode.head should be (("PL", "Poland"))
   }
 
   it should "query airports" in {
@@ -28,6 +32,12 @@ class CsvServiceSpec extends FlatSpec with Matchers {
     airports.size should be (2)
     airports(0) should be(pl1)
     airports(1) should be(pl2)
+  }
+
+  it should "query countries, airports and runways" in {
+    val csvService = new CsvService(RunwaysPerCountryMockImporter)
+    val withRunways = csvService.queryAirportsWithRunways("Can")
+    withRunways.size should be (1)
   }
 
   it should "query top countries grouped by number of airports" in {
@@ -97,8 +107,8 @@ class CsvServiceSpec extends FlatSpec with Matchers {
         List(
           Map("id" -> "11002", "iso_country" -> "PL"),
           Map("id" -> "11003", "iso_country" -> "PL"),
-          Map("id" -> "11004", "iso_country" -> "CA"),
-          Map("id" -> "11005", "iso_country" -> "CA"))
+          Map("id" -> "11004", "iso_country" -> "CA", "name" -> "Flughafen"),
+          Map("id" -> "11005", "iso_country" -> "CA", "name" -> "Aeroporto"))
       } else { // runways
         List(
           Map("airport_ref" -> "11002", "surface" -> "TURF-F"),

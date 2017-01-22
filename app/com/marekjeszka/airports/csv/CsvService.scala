@@ -1,5 +1,6 @@
 package com.marekjeszka.airports.csv
 
+import com.marekjeszka.airports.model.CountryAirportRunway
 import com.marekjeszka.airports.{DataImporter, DataService}
 import com.typesafe.config.ConfigFactory
 
@@ -9,48 +10,68 @@ class CsvService(importer: DataImporter = CsvImporter) extends DataService {
   import CsvService._
 
   private val conf = ConfigFactory.load()
-  private val countries = importer.loadData(conf.getString("paths.countries"))
-  private val airports = importer.loadData(conf.getString("paths.airports"))
-  private val runways = importer.loadData(conf.getString("paths.runways"))
+  private val allCountries = importer.loadData(conf.getString("paths.countries"))
+  private val allAirports = importer.loadData(conf.getString("paths.airports"))
+  private val allRunways = importer.loadData(conf.getString("paths.runways"))
 
-  override def queryCountries(countryName: String): List[(String,String)] = {
-    countries.filter(m => m(Name).startsWith(countryName)).map(c => (c(Code),c(Name)))
+  /**
+    * Returns list of countries for given code or name (works partially - starts with).
+    * @param countryName name or code of the country
+    * @return (code,name)
+    */
+  def queryCountries(countryName: String): List[(String,String)] = {
+    allCountries
+      .filter(m => m(Name).startsWith(countryName) || m(Code) == countryName)
+      .map(c => (c(Code),c(Name)))
   }
 
-  override def queryAirports(iso_country: String): List[Map[String, String]] = {
-    isoCountryQuery(iso_country)(airports)
+  /**
+    * Returns list of airports for given country code.
+    * @param iso_country country code
+    * @return airports as map: field -> value
+    */
+  def queryAirports(iso_country: String): List[Map[String, String]] = {
+    allAirports.filter(m => m(Iso_country) == iso_country)
   }
 
-  override def queryRunways(iso_country: String): List[Map[String, String]] = {
-    isoCountryQuery(iso_country)(runways)
+  /**
+    * Returns list of runways for given airport ref.
+    * @param airport_ref airport ref
+    * @return runways as map: field -> value
+    */
+  def queryRunways(airport_ref: String): List[Map[String, String]] = {
+    allRunways.filter(m => m(Airport_ref) == airport_ref)
   }
 
-  private def isoCountryQuery(iso_country: String)(from: List[Map[String,String]]) = {
-    from.filter(m => m(Iso_country) == iso_country)
+  override def queryAirportsWithRunways(countryName: String): List[CountryAirportRunway] = {
+    queryCountries(countryName).map(c =>
+      CountryAirportRunway(
+        c._2,
+        queryAirports(c._1).map(a => (a(Name), queryRunways(a(Id))))))
   }
 
   override def queryTopCountries(limit: Int, descending: Boolean): List[(Map[String, String],Int)] = {
-    val airportsCount = sizeOfGroup(airports, Iso_country)
+    val airportsCount = sizeOfGroup(allAirports, Iso_country)
     val ordered = ListMap(airportsCount.toSeq.sortWith(ordering(descending)):_*).take(limit)
-    countries
+    allCountries
       .filter(c => ordered.contains(c(Code)))
       .map(c => (c, ordered(c(Code))))
   }
 
   override def queryRunwaysPerCountry(): List[(String,List[String])] = {
-    countries.map(c => (c(Name), c(Code)))
+    allCountries.map(c => (c(Name), c(Code)))
       .map(c => (c._1,
-        airports.filter(a => a(Iso_country) == c._2).map(a => a(Id))))
+        allAirports.filter(a => a(Iso_country) == c._2).map(a => a(Id))))
       .map(c => (c._1,
         c._2
           .flatMap(
-            airportId => runways.filter(r => r(Airport_ref) == airportId)
+            airportId => allRunways.filter(r => r(Airport_ref) == airportId)
           )
           .map(r => r(Surface))))
   }
 
   override def queryTopRunwayIdentifications(limit: Int): List[String] = {
-    val identsCount = sizeOfGroup(runways, Le_ident)
+    val identsCount = sizeOfGroup(allRunways, Le_ident)
     val ordered = ListMap(identsCount.toSeq.sortWith(ordering(true)):_*).take(limit)
     ordered.keys.toList
   }
