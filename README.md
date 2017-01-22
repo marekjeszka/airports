@@ -1,3 +1,5 @@
+ <img src="https://travis-ci.org/marekjeszka/airports.svg?branch=master"/>
+
 # airports (forked from vijaykiran/random-repo)
 
 # Resources
