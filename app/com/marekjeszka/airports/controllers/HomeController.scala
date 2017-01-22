@@ -1,24 +1,25 @@
 package com.marekjeszka.airports.controllers
 
 import javax.inject._
-import play.api._
+
+import com.marekjeszka.airports.DataService
+import com.marekjeszka.airports.csv.CsvService
+import com.marekjeszka.airports.model.CountryAirportRunway
+import play.api.libs.json._
 import play.api.mvc._
 
-/**
- * This controller creates an `Action` to handle HTTP requests to the
- * application's home page.
- */
 @Singleton
 class HomeController @Inject() extends Controller {
 
-  /**
-   * Create an Action to render an HTML page.
-   *
-   * The configuration in the `routes` file means that this method
-   * will be called when the application receives a `GET` request with
-   * a path of `/`.
-   */
-  def index = Action { implicit request =>
+  private val dataService: DataService = new CsvService()
+
+  def index = Action {
     Ok(com.marekjeszka.airports.views.html.index())
+  }
+
+  def countries(name: String) = Action {
+    import CountryAirportRunway._
+    val json: JsValue = Json.toJson(dataService.queryAirportsWithRunways(name))
+    Ok(json)
   }
 }
