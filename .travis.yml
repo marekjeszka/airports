@@ -5,4 +5,5 @@ jdk:
   - oraclejdk8
 
 script: "sbt clean coverage test"
+script: "sbt coverageReport"
 after_success: "sbt coveralls"
