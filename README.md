@@ -1,4 +1,4 @@
- [![Build Status](https://travis-ci.org/marekjeszka/airports.svg?branch=master)](https://travis-ci.org/marekjeszka/airports.svg?branch=master)
+ [![Build Status](https://travis-ci.org/marekjeszka/airports.svg?branch=master)](https://travis-ci.org/marekjeszka/airports)
  [![Coverage Status](https://coveralls.io/repos/github/marekjeszka/airports/badge.svg?branch=master)](https://coveralls.io/github/marekjeszka/airports?branch=master) 
 
 # airports (forked from vijaykiran/random-repo)
@@ -15,3 +15,9 @@ Available endpoints:
 # Resources
 
 Airports data from http://ourairports.com/data/ (released under public domain)
+
+# Building and running
+
+1. `clone` project.
+2. Execute `sbt run`.
+3. Open `localhost:9000` in favorite browser.
