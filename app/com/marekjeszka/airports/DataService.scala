@@ -1,7 +1,10 @@
 package com.marekjeszka.airports
 
+import com.google.inject.ImplementedBy
+import com.marekjeszka.airports.csv.CsvService
 import com.marekjeszka.airports.model.CountryAirportRunway
 
+@ImplementedBy(classOf[CsvService])
 trait DataService {
   def queryAirportsWithRunways(countryName: String): List[CountryAirportRunway]
 

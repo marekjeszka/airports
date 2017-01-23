@@ -1,12 +1,13 @@
 package com.marekjeszka.airports.csv
 
+import com.google.inject.Inject
 import com.marekjeszka.airports.model.CountryAirportRunway
 import com.marekjeszka.airports.{DataImporter, DataService}
 import com.typesafe.config.ConfigFactory
 
 import scala.collection.immutable.ListMap
 
-class CsvService(importer: DataImporter = CsvImporter) extends DataService {
+class CsvService @Inject() (implicit importer: DataImporter) extends DataService {
   import CsvService._
 
   private val conf = ConfigFactory.load()

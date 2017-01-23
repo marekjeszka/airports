@@ -7,11 +7,12 @@ import org.scalatest.{FlatSpec, Matchers}
 
 class CsvServiceSpec extends FlatSpec with Matchers {
   "CsvService" should "query countries partially/fuzzy by name and code" in {
-    val csvService = new CsvService(new MockImporter(
+    implicit val importer = new MockImporter(
       List(
         Map("name" -> "Liberia", "code" -> "LR"),
         Map("name" -> "Lithuania", "code" -> "LT"),
-        Map("name" -> "Poland", "code" -> "PL"))))
+        Map("name" -> "Poland", "code" -> "PL")))
+    val csvService = new CsvService()
     val countriesByName = csvService.queryCountries("Li")
     countriesByName.size should be (2)
     countriesByName(0) should be(("LR", "Liberia"))
@@ -25,10 +26,11 @@ class CsvServiceSpec extends FlatSpec with Matchers {
   it should "query airports" in {
     val pl1 = Map("id" -> "11002", "iso_country" -> "PL")
     val pl2 = Map("id" -> "11003", "iso_country" -> "PL")
-    val csvService = new CsvService(new MockImporter(
+    implicit val importer = new MockImporter(
       List(
         Map("id" -> "11001", "iso_country" -> "GB"),
-        pl1, pl2)))
+        pl1, pl2))
+    val csvService = new CsvService()
     val airports = csvService.queryAirports("PL")
     airports.size should be (2)
     airports(0) should be(pl1)
@@ -36,7 +38,8 @@ class CsvServiceSpec extends FlatSpec with Matchers {
   }
 
   it should "query countries, airports and runways" in {
-    val csvService = new CsvService(RunwaysPerCountryMockImporter)
+    implicit val importer = RunwaysPerCountryMockImporter
+    val csvService = new CsvService()
     val withRunways = csvService.queryAirportsWithRunways("Can")
     withRunways.size should be (1)
     withRunways.head should be (
@@ -45,7 +48,8 @@ class CsvServiceSpec extends FlatSpec with Matchers {
   }
 
   it should "query top countries grouped by number of airports" in {
-    val csvService = new CsvService(TopCountriesMockImporter)
+    implicit val importer = TopCountriesMockImporter
+    val csvService = new CsvService()
     val topCountries = csvService.queryTopCountries(2)
     topCountries.size should be (2)
     topCountries(0) should be ((Map("name" -> "Poland", "code" -> "PL"), 2))
@@ -58,7 +62,8 @@ class CsvServiceSpec extends FlatSpec with Matchers {
   }
 
   it should "query surfaces per country" in {
-    val csvService = new CsvService(RunwaysPerCountryMockImporter)
+    implicit val importer = RunwaysPerCountryMockImporter
+    val csvService = new CsvService()
     val runwaysPerCountry = csvService.queryRunwaysPerCountry()
     runwaysPerCountry.size should be (2)
     runwaysPerCountry(0) should be (("Poland", List("TURF-F", "TURF")))
@@ -66,7 +71,8 @@ class CsvServiceSpec extends FlatSpec with Matchers {
   }
 
   it should "query top runway identification" in {
-    val csvService = new CsvService(RunwaysIdentMockImporter)
+    implicit val importer = RunwaysIdentMockImporter
+    val csvService = new CsvService()
     val topIdent = csvService.queryTopRunwayIdentifications(limit = 2)
     topIdent.size should be (2)
     topIdent(0) should be ("H1")

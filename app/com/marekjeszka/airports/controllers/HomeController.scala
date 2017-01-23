@@ -3,15 +3,12 @@ package com.marekjeszka.airports.controllers
 import javax.inject._
 
 import com.marekjeszka.airports.DataService
-import com.marekjeszka.airports.csv.CsvService
 import com.marekjeszka.airports.model.CountryAirportRunway
 import play.api.libs.json._
 import play.api.mvc._
 
 @Singleton
-class HomeController @Inject() extends Controller {
-
-  private val dataService: DataService = new CsvService()
+class HomeController @Inject() (dataService: DataService) extends Controller {
 
   def index = Action {
     Ok(com.marekjeszka.airports.views.html.index())
