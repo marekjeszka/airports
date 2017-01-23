@@ -6,7 +6,8 @@ version := "1.0"
 
 lazy val root = (project in file("."))
   .enablePlugins(PlayScala)
-  .settings(coverageExcludedPackages := "<empty>;.*Routes.scala")
+
+coverageExcludedFiles := ".*Routes.*;.*template.*"
 
 scalaVersion := "2.11.8"
 
